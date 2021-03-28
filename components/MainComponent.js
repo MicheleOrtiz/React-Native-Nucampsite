@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import Home from './HomeComponent';
 import Directory from './DirectoryComponent';
 import CampsiteInfo from './CampsiteInfoComponent';
-import { View, Platform, StyleSheet, Text, ScrollView, Image,  Alert, ToastAndroid  } from 'react-native';
+import { View, Platform, StyleSheet, Text, ScrollView, Image, Alert, ToastAndroid} from 'react-native';
+import { Icon } from 'react-native-elements';
 import { createStackNavigator } from 'react-navigation-stack';
-import { createDrawerNavigator, DrawerItems } from 'react-navigation-drawer';
+import { createDrawerNavigator, DrawerItems  } from 'react-navigation-drawer';
 import { createAppContainer } from 'react-navigation';
 import About from './AboutComponent';
 import Contact from './ContactComponent';
-import { Icon } from 'react-native-elements';
 import SafeAreaView from 'react-native-safe-area-view';
 import { connect } from 'react-redux';
 import { fetchCampsites, fetchComments, fetchPromotions, fetchPartners } from '../redux/ActionCreators';
@@ -17,13 +17,14 @@ import Favorites from './FavoritesComponent';
 import Login from './LoginComponent';
 import NetInfo from '@react-native-community/netinfo';
 
+
+
 const mapDispatchToProps = {
     fetchCampsites,
     fetchComments,
     fetchPromotions,
     fetchPartners
 };
-
 
 const DirectoryNavigator = createStackNavigator(
     {
@@ -124,6 +125,7 @@ const ContactNavigator = createStackNavigator(
     }
 );
 
+
 const ReservationNavigator = createStackNavigator(
     {
         Reservation: { screen: Reservation }
@@ -147,6 +149,7 @@ const ReservationNavigator = createStackNavigator(
     }
 );
 
+
 const FavoritesNavigator = createStackNavigator(
     {
         Favorites: { screen: Favorites }
@@ -169,7 +172,7 @@ const FavoritesNavigator = createStackNavigator(
         })
     }
 );
-  
+
 const LoginNavigator = createStackNavigator(
     {
         Login: { screen: Login }
@@ -212,7 +215,7 @@ const CustomDrawerContentComponent = props => (
 );
 
 const MainNavigator = createDrawerNavigator(
-    {
+    { 
         Login: {
             screen: LoginNavigator,
             navigationOptions: {
@@ -252,6 +255,7 @@ const MainNavigator = createDrawerNavigator(
                 )
             }
         },
+
         Reservation: {
             screen: ReservationNavigator,
             navigationOptions: {
@@ -266,21 +270,24 @@ const MainNavigator = createDrawerNavigator(
                 )
             }
         },
+
     
-    Favorites: {
-        screen: FavoritesNavigator,
-        navigationOptions: {
-            drawerLabel: 'My Favorites',
-            drawerIcon: ({tintColor}) => (
-                <Icon
-                    name='heart'
-                    type='font-awesome'
-                    size={24}
-                    color={tintColor}
-                />
-            )
-        }
-    },
+        Favorites: {
+            screen: FavoritesNavigator,
+            navigationOptions: {
+                drawerLabel: 'My Favorites',
+                drawerIcon: ({tintColor}) => (
+                    <Icon
+                        name='heart'
+                        type='font-awesome'
+                        size={24}
+                        color={tintColor}
+                    />
+                )
+            }
+        },
+    
+
         About: {
             screen: AboutNavigator,
             navigationOptions: {
@@ -293,8 +300,9 @@ const MainNavigator = createDrawerNavigator(
                         color={tintColor}
                     />
                 )
-            }
+            },
         },
+
         Contact: {
             screen: ContactNavigator,
             navigationOptions: {
@@ -309,36 +317,38 @@ const MainNavigator = createDrawerNavigator(
                 )
             }
         }
-    },
+    },       
     {
         initialRouteName: 'Home',
         drawerBackgroundColor: '#CEC8FF',
         contentComponent: CustomDrawerContentComponent
-    }
+    }   
 );
-
 const AppNavigator = createAppContainer(MainNavigator);
 
 class Main extends Component {
-    
+   
     componentDidMount() {
         this.props.fetchCampsites();
         this.props.fetchComments();
         this.props.fetchPromotions();
         this.props.fetchPartners();
 
-        NetInfo.fetch().then(connectionInfo => {
-            (Platform.OS === 'ios')
-                ? Alert.alert('Initial Network Connectivity Type:', connectionInfo.type)
-                : ToastAndroid.show('Initial Network Connectivity Type: ' +
-                    connectionInfo.type, ToastAndroid.LONG);
-        });
+        this.showNetInfo();
 
         this.unsubscribeNetInfo = NetInfo.addEventListener(connectionInfo => {
             this.handleConnectivityChange(connectionInfo);
         });
     }
 
+    showNetInfo = async () => {
+        const connectionInfo = await NetInfo.fetch();
+        (Platform.OS === 'ios')
+        ? Alert.alert('Initial Network Connectivity Type:', connectionInfo.type)
+        : ToastAndroid.show('Initial Network Connectivity Type: ' +
+        connectionInfo.type, ToastAndroid.LONG);
+        
+    }
     componentWillUnmount() {
         this.unsubscribeNetInfo();
     }
@@ -364,8 +374,6 @@ class Main extends Component {
             : ToastAndroid.show(connectionMsg, ToastAndroid.LONG);
     }
 
-    
-
     render() {
         return (
             <View 
@@ -378,6 +386,7 @@ class Main extends Component {
         );    
     }
 }
+
 
 const styles = StyleSheet.create({
     container: {
